@@ -1,4 +1,4 @@
-package com.backend.juvaro.dtos;
+package com.backend.juvaro.dtos.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

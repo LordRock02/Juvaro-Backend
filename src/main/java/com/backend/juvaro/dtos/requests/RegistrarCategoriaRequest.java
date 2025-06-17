@@ -1,4 +1,4 @@
-package com.backend.juvaro.dtos;
+package com.backend.juvaro.dtos.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class DepartamentoDto {
-    private long id;
+public class RegistrarCategoriaRequest {
     private String nombre;
+    private String descripcion;
 }
