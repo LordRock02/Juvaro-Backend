@@ -88,4 +88,19 @@ public class StockServiceImpl implements StockService {
 
         return stockMapper.toDto(stock);
     }
+
+    @Override
+    public StockDto buscarStockPorProductoYDepartamento(Long productoId, Long departamentoId) throws ResourceNotFoundException {
+        LOGGER.info("Buscando stock para productoId: {} y departamentoId: {}", productoId, departamentoId);
+
+        // Llama al nuevo método del repositorio.
+        Stock stock = stockRepository.findByProductoIdAndDepartamentoId(productoId, departamentoId)
+                // Si el Optional está vacío, lanza una excepción.
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró stock para el producto con ID " + productoId + " en el departamento con ID " + departamentoId));
+
+        LOGGER.info("Stock encontrado: {}", stock);
+
+        // Mapea la entidad encontrada a un DTO y la devuelve.
+        return stockMapper.toDto(stock);
+    }
 }

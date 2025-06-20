@@ -14,4 +14,5 @@ public interface StockService {
     StockDto buscarStockPorId(Long id) throws ResourceNotFoundException;
     StockDto eliminarStock(Long id) throws ResourceNotFoundException;
     StockDto actualizarStock(Long id, UpdateStockRequest request) throws ResourceNotFoundException;
+    StockDto buscarStockPorProductoYDepartamento(Long productoId, Long departamentoId) throws ResourceNotFoundException;
 }

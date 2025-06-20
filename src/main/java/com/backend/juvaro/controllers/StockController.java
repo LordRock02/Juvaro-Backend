@@ -46,5 +46,13 @@ public class StockController {
         return new ResponseEntity<>("Stock eliminada con éxito", HttpStatus.OK);
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<StockDto> buscarStockPorProductoYDepartamento(
+            @RequestParam Long productoId,
+            @RequestParam Long departamentoId) throws ResourceNotFoundException {
+        StockDto stockEncontrado = stockService.buscarStockPorProductoYDepartamento(productoId, departamentoId);
+        return new ResponseEntity<>(stockEncontrado, HttpStatus.OK);
+    }
+
 }
 

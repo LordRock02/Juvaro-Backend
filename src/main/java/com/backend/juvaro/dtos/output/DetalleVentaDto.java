@@ -5,11 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-@Getter
 @Setter
-public class StockDto {
-    private long id;
-    private int cantidad;
+@Getter
+public class DetalleVentaDto {
+    private Long id;
     private Long productoId;
+    private String nombreProducto;
     private Long departamentoId;
+    private String nombreDepartamento;
+    private int cantidad;
+    private double precioUnitario;
 }
