@@ -9,9 +9,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface ProductoMapper {
+    ProductoMapper INSTANCE = Mappers.getMapper(ProductoMapper.class);
     @Mapping(source = "categoria.id", target = "categoriaId")
     ProductoDto toDto(Producto producto);
     @Mapping(source = "categoriaId", target = "categoria.id")

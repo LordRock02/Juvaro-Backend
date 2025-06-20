@@ -11,11 +11,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "stock")
+@Table(
+        name = "stock",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"producto_id", "departamento_id"})
+        }
+)
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
