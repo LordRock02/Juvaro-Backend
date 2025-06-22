@@ -10,6 +10,7 @@ import lombok.Setter;
 public class UpdateProductoRequest {
     private String nombre;
     private String descripcion;
+    private String imagenUrl;
     private double precio;
     private Long categoriaId;
 }

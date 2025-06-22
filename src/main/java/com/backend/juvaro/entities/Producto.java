@@ -24,6 +24,9 @@ public class Producto {
     @Column(length = 200)
     private String descripcion;
 
+    @Column(name = "imagen_url", length = 2048)
+    private String imagenUrl;
+
     @Column
     private Double Precio;
 

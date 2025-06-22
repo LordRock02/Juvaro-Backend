@@ -11,6 +11,7 @@ import lombok.Setter;
 public class RegistrarProductoRequest {
     String nombre;
     String descripcion;
+    String imagenUrl;
     double precio;
     long categoriaId;
 

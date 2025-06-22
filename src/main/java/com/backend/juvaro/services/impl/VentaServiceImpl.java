@@ -12,6 +12,8 @@ import com.backend.juvaro.mappers.VentaMapper;
 import com.backend.juvaro.repositories.*;
 import com.backend.juvaro.services.StockService;
 import com.backend.juvaro.services.VentaService;
+import com.backend.juvaro.services.notificaciones.factory.MensajeFactory;
+import com.backend.juvaro.services.notificaciones.observer.VentaPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,17 +42,21 @@ public class VentaServiceImpl implements VentaService {
     private DepartamentoRepository departamentoRepository;
     @Autowired
     private VentaMapper ventaMapper;
-    // En el futuro, también inyectarías el VentaPublisher y MensajeFactory aquí
+    @Autowired
+    private VentaPublisher ventaPublisher;
+    @Autowired
+    private MensajeFactory mensajeFactory;
 
     @Override
     @Transactional // ¡Muy importante! Asegura que toda la operación sea atómica. Si algo falla, se revierte todo.
     public VentaDto crearVenta(RegistrarVentaRequest request) throws BadRequestException, ResourceNotFoundException {
         LOGGER.info("Iniciando proceso de creación de venta para el usuario ID: {}", request.getUsuarioId());
 
-
+        // 1. Validar y obtener las entidades principales
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + request.getUsuarioId()));
 
+        // 2. Preparar el objeto Venta principal
         Venta nuevaVenta = new Venta();
         nuevaVenta.setUsuario(usuario);
         nuevaVenta.setFecha(LocalDate.now());
@@ -58,27 +64,24 @@ public class VentaServiceImpl implements VentaService {
 
         double valorTotalVenta = 0.0;
 
+        // 3. Procesar cada ítem del "carrito de compras"
         for (ItemVentaRequest item : request.getItems()) {
-
+            // Validar stock
             StockDto stockActual = stockService.buscarStockPorProductoYDepartamento(item.getProductoId(), item.getDepartamentoId());
-
-
             if (stockActual.getCantidad() < item.getCantidad()) {
-                throw new BadRequestException("Stock insuficiente para el producto ID " + item.getProductoId() +
-                        ". Solicitado: " + item.getCantidad() + ", Disponible: " + stockActual.getCantidad());
+                throw new BadRequestException("Stock insuficiente para el producto ID " + item.getProductoId());
             }
 
-            LOGGER.info("Stock validado para producto ID: {}. Descontando {} unidades.", item.getProductoId(), item.getCantidad());
-
-
+            // Descontar stock
             int nuevaCantidad = stockActual.getCantidad() - item.getCantidad();
             UpdateStockRequest stockRequest = new UpdateStockRequest();
             stockRequest.setCantidad(nuevaCantidad);
-
             stockService.actualizarStock(stockActual.getId(), stockRequest);
-            // NOTA: Más adelante, es este método 'actualizarStock' el que debería notificar al Publisher.
 
+            // --- Notificación de STOCK (Patrón Observer) ---
+            ventaPublisher.notificar(mensajeFactory.crearStockUpdateMensaje(item.getProductoId(), nuevaCantidad));
 
+            // Preparar el detalle de la venta
             Producto producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + item.getProductoId()));
             Departamento departamento = departamentoRepository.findById(item.getDepartamentoId())
@@ -86,20 +89,26 @@ public class VentaServiceImpl implements VentaService {
 
             DetalleVenta detalle = new DetalleVenta();
             detalle.setProducto(producto);
+
             detalle.setDepartamento(departamento);
             detalle.setCantidad(item.getCantidad());
-            detalle.setPrecioUnitario(producto.getPrecio());
+            detalle.setPrecioUnitario(producto.getPrecio()); // Asumiendo que Producto tiene getPrecio()
             detalle.setVenta(nuevaVenta);
 
             nuevaVenta.getDetalles().add(detalle);
             valorTotalVenta += detalle.getPrecioUnitario() * detalle.getCantidad();
         }
 
-
+        // 4. Finalizar y guardar la Venta
         nuevaVenta.setValorTotal(valorTotalVenta);
         Venta ventaGuardada = ventaRepository.save(nuevaVenta);
 
-        LOGGER.info("Venta creada exitosamente con ID: {}. Valor total: {}", ventaGuardada.getId(), ventaGuardada.getValorTotal());
+        // --- Notificación de VENTA REALIZADA (Patrón Observer) ---
+        ventaPublisher.notificar(mensajeFactory.crearVentaRealizadaMensaje(ventaGuardada));
+
+        LOGGER.info("Venta creada exitosamente con ID: {}. Notificaciones delegadas al Publisher.", ventaGuardada.getId());
+
+        // 5. Devolver el resultado
         return ventaMapper.toDto(ventaGuardada);
     }
 
