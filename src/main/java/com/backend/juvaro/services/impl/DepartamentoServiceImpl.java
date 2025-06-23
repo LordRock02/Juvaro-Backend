@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class DepartamentoServiceImpl implements DepartamentoService {
     private DepartamentoMapper departamentoMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DepartamentoDto> listarDepartamentos() throws BadRequestException {
         return departamentoRepository.findAll()
                 .stream()
