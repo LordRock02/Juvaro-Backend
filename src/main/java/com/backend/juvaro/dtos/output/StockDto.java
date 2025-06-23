@@ -12,6 +12,4 @@ public class StockDto {
     private int cantidad;
     private Long productoId;
     private Long departamentoId;
-    private DepartamentoDto departamentoDto;
-    private ProductoDto productoDto;
 }
