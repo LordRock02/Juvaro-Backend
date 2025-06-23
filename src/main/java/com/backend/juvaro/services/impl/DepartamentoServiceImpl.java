@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartamentoServiceImpl implements DepartamentoService {
@@ -31,10 +32,11 @@ public class DepartamentoServiceImpl implements DepartamentoService {
     @Override
     @Transactional(readOnly = true)
     public List<DepartamentoDto> listarDepartamentos() throws BadRequestException {
-        return departamentoRepository.findAllWithStocksAndProducts()
-                .stream()
+        List<Departamento> departamentos = departamentoRepository.findAllWithStocksAndProducts();
+
+        return departamentos.stream()
                 .map(departamentoMapper::toDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
