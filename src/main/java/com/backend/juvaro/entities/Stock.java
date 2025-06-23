@@ -1,10 +1,7 @@
 package com.backend.juvaro.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -29,8 +26,10 @@ public class Stock {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Producto producto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departamento_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Departamento departamento;
 
     @Column
