@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,8 +21,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-@AllArgsConstructor
+@AllArgsConstructor // Usa Lombok para inyectar las dependencias en el constructor
 public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
@@ -32,16 +30,16 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
-        // Aquí estás usando una clase de otro paquete, asegúrate de que sea la correcta para este proyecto.
         com.backend.integraservicios.security.JWTAuthenticationFilter jwtAuthenticationFilter = new com.backend.integraservicios.security.JWTAuthenticationFilter();
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
 
         return http
+                // LA LÍNEA CLAVE: Le decimos a Spring Security que aplique la configuración de CORS
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Permite login y register
+                        .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

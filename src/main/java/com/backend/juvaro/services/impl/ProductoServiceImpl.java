@@ -10,6 +10,7 @@ import com.backend.juvaro.exceptions.ResourceNotFoundException;
 import com.backend.juvaro.mappers.ProductoMapper;
 import com.backend.juvaro.repositories.CategoriaRepository;
 import com.backend.juvaro.repositories.ProductoRepository;
+import com.backend.juvaro.repositories.StockRepository;
 import com.backend.juvaro.services.ProductoService;
 import com.backend.juvaro.utils.JsonPrinter;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Autowired
     private ProductoMapper productoMapper;
+
+    @Autowired
+    private StockRepository stockRepository;
 
     @Override
     public List<ProductoDto> listarProductos() throws BadRequestException {

@@ -25,11 +25,6 @@ public class DetalleVenta {
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    // --- NUEVO CAMPO AÑADIDO ---
-    /**
-     * Almacena el departamento del cual se vendió el producto.
-     * Es crucial para el seguimiento de inventario y reportes de ventas por sucursal.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departamento_id", nullable = false)
     private Departamento departamento;
