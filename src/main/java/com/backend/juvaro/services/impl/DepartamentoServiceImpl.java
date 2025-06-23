@@ -31,7 +31,7 @@ public class DepartamentoServiceImpl implements DepartamentoService {
     @Override
     @Transactional(readOnly = true)
     public List<DepartamentoDto> listarDepartamentos() throws BadRequestException {
-        return departamentoRepository.findAll()
+        return departamentoRepository.findAllWithStocksAndProducts()
                 .stream()
                 .map(departamentoMapper::toDto)
                 .toList();
