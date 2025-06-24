@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -35,5 +37,8 @@ public class Usuario {
     private LocalDate fechaRegistro;
 
     private int rol;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Venta> venta = new ArrayList<>();
 
 }
