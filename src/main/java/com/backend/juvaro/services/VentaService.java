@@ -18,6 +18,8 @@ public interface VentaService {
 
     List<VentaDto> listarVentas() throws BadRequestException;
 
+    List<VentaDto> buscarVentasPorUsuario(long usuarioId) throws BadRequestException;
+
     VentaDto obtenerVentaPorId(Long id) throws ResourceNotFoundException;
 
     // Aquí irían los métodos para los suscriptores si sigues el diseño del publisher dedicado.

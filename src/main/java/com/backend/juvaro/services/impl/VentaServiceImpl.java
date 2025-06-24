@@ -128,6 +128,20 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Override
+    public List<VentaDto> buscarVentasPorUsuario(long usuarioId) throws BadRequestException {
+        LOGGER.info("Solicitud para listar todas las ventas del usuario. {}", usuarioId);
+
+        List<Venta> ventas = ventaRepository.findByUsuarioId(usuarioId);
+
+        List<VentaDto> ventasDto = ventas.stream()
+                .map(ventaMapper::toDto)
+                .collect(Collectors.toList());
+
+        LOGGER.info("Se encontraron {} ventas.", ventasDto.size());
+        return ventasDto;
+    }
+
+    @Override
     public VentaDto obtenerVentaPorId(Long id) throws ResourceNotFoundException {
         LOGGER.info("Buscando venta con ID: {}", id);
 
