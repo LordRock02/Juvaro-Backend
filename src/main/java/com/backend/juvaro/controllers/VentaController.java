@@ -36,4 +36,10 @@ public class VentaController {
         VentaDto venta = ventaService.obtenerVentaPorId(id);
         return new ResponseEntity<>(venta, HttpStatus.OK);
     }
+
+    @GetMapping("/buscarVentaUsuario/{id}")
+    public ResponseEntity<List<VentaDto>> obtenerVentaPorUsuario(@PathVariable Long id) throws ResourceNotFoundException {
+        List<VentaDto> ventas = ventaService.buscarVentasPorUsuario(id);
+        return new ResponseEntity<>(ventas, HttpStatus.OK);
+    }
 }

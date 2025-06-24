@@ -18,7 +18,7 @@ public interface VentaService {
 
     List<VentaDto> listarVentas() throws BadRequestException;
 
-    List<VentaDto> buscarVentasPorUsuario(long usuarioId) throws BadRequestException;
+    List<VentaDto> buscarVentasPorUsuario(long usuarioId) throws ResourceNotFoundException;
 
     VentaDto obtenerVentaPorId(Long id) throws ResourceNotFoundException;
 
