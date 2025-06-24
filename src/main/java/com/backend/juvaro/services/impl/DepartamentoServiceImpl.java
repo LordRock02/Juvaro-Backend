@@ -36,6 +36,7 @@ public class DepartamentoServiceImpl implements DepartamentoService {
 
         departamentos.forEach(d -> d.getStocks().forEach(s -> s.getProducto().getId()));
 
+
         return departamentos.stream()
                 .map(departamentoMapper::toDto)
                 .collect(Collectors.toList());
